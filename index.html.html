@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfect Roll - The Ultimate Dice Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f1419 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(78, 205, 196, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 1rem;
+        }
+
+        h1 {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a3a0 50%, #2d6a6a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            color: #a8a8a8;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .game-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 2rem;
+            flex: 1;
+            align-items: start;
+        }
+
+        @media (max-width: 968px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        .main-area {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(78, 205, 196, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .main-area:hover::before {
+            opacity: 1;
+        }
+
+        .main-area:hover {
+            transform: translateY(-2px);
+            border-color: rgba(78, 205, 196, 0.2);
+        }
+
+        .main-area:active {
+            transform: translateY(0);
+        }
+
+        .dice-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            align-items: center;
+            max-width: 800px;
+            margin-bottom: 2rem;
+        }
+
+        .dice {
+            width: 80px;
+            height: 80px;
+            perspective: 1000px;
+            transition: transform 0.3s ease;
+        }
+
+        .dice-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .dice.rolling .dice-inner {
+            animation: roll 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes roll {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            25% { transform: rotateX(180deg) rotateY(90deg); }
+            50% { transform: rotateX(360deg) rotateY(270deg); }
+            75% { transform: rotateX(540deg) rotateY(450deg); }
+            100% { transform: rotateX(720deg) rotateY(720deg); }
+        }
+
+        .dice-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1),
+                        0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .dice-face::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border-radius: 8px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.4), transparent);
+            pointer-events: none;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dice face positioning using 3D transforms */
+        .face-1 { transform: rotateY(0deg) translateZ(40px); }
+        .face-2 { transform: rotateY(90deg) translateZ(40px); }
+        .face-3 { transform: rotateY(180deg) translateZ(40px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(40px); }
+        .face-5 { transform: rotateX(90deg) translateZ(40px); }
+        .face-6 { transform: rotateX(-90deg) translateZ(40px); }
+
+        /* Dot patterns for each face */
+        .face-1 { justify-content: center; align-items: center; }
+        .face-1 .dot { grid-area: center; }
+
+        .face-2 { justify-content: space-between; }
+        .face-2 .dot:first-child { align-self: flex-start; }
+        .face-2 .dot:last-child { align-self: flex-end; }
+
+        .face-3 { justify-content: space-between; }
+	.face-3 .dot:first-child { align-self: flex-start; }
+        .face-3 .dot:nth-child(2) { align-self: center; }
+        .face-3 .dot:last-child { align-self: flex-end; }
+
+        .face-4 { flex-direction: column; justify-content: space-between; }
+        .face-4 .row { display: flex; width: 100%; justify-content: space-between; }
+
+        .face-5 { flex-direction: column; justify-content: space-between; }
+        .face-5 .row { display: flex; width: 100%; justify-content: space-between; }
+        .face-5 .center { display: flex; justify-content: center; }
+
+        .face-6 { flex-direction: column; justify-content: space-between; }
+        .face-6 .row { display: flex; width: 100%; justify-content: space-between; }
+
+        .prompt {
+            font-size: 1.125rem;
+            color: #4ecdc4;
+            font-weight: 600;
+            opacity: 0.8;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .side-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 2rem;
+        }
+
+        .stat {
+            margin-bottom: 2rem;
+        }
+
+        .stat:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #888;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-family: 'Manrope', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a3a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .stat-subtext {
+            font-size: 0.875rem;
+            color: #a8a8a8;
+            margin-top: 0.5rem;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin: 2rem 0;
+        }
+
+        .level-indicator {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(78, 205, 196, 0.2);
+        }
+
+        .level-number {
+            font-size: 1rem;
+            color: #4ecdc4;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 3rem;
+            text-align: center;
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .instructions h3 {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #4ecdc4;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .instructions p {
+            font-size: 0.875rem;
+            color: #a8a8a8;
+            line-height: 1.6;
+        }
+
+        .warning {
+            font-size: 0.75rem;
+            color: #ff6b6b;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(78, 205, 196, 0.95);
+            color: #1a1a2e;
+            padding: 2rem 3rem;
+            border-radius: 16px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 8px 32px rgba(78, 205, 196, 0.4);
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .success-message.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .record-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-top: 0.5rem;
+            animation: recordPulse 1s ease-in-out 3;
+        }
+
+        @keyframes recordPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .main-area {
+                padding: 2rem 1rem;
+                min-height: 400px;
+            }
+
+            .dice {
+                width: 60px;
+                height: 60px;
+            }
+
+            .dice-face {
+                padding: 8px;
+            }
+
+            .dot {
+                width: 10px;
+                height: 10px;
+            }
+
+            .side-panel {
+                position: static;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+
+        /* Sound toggle button */
+        .sound-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(78, 205, 196, 0.3);
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+
+        .sound-icon {
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Perfect Roll</h1>
+            <p class="subtitle">The Ultimate Dice Game</p>
+        </header>
+<div class="instructions" style="max-width: 900px;">
+    <h3>Goal</h3>
+    <p>Reach <strong>10 identical dice</strong>. Each level adds one die. The odds get brutal.</p>
+    <br>
+    <h3>How to Play</h3>
+    <p><strong>Click anywhere</strong> in the game area to roll.</p>
+    <p>If <strong>all dice match</strong>, you advance to the next level (more dice).</p>
+    <p>If they don’t match, nothing resets — just roll again.</p>
+</div>
+        <div class="game-layout">
+            <div class="main-area" id="gameArea">
+                <div class="dice-container" id="diceContainer"></div>
+                <p class="prompt" id="prompt">Click anywhere to roll</p>
+            </div>
+
+            <div class="side-panel">
+                <div class="stat">
+                    <div class="stat-label">Current Level</div>
+                    <div class="stat-value" id="currentLevel">2</div>
+                    <div class="stat-subtext">dice in play</div>
+                </div>
+
+		<div class="divider"></div>
+
+<div class="stat">
+    <div class="stat-label">Total Rolls</div>
+    <div class="stat-value" id="totalRolls">0</div>
+    <div class="stat-subtext">this session</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="stat">
+    <div class="stat-label">Level Probability</div>
+    <div class="stat-value" id="levelProbability">0%</div>
+    <div class="stat-subtext">chance to pass this level</div>
+</div>
+
+                <div class="divider"></div>
+
+                <div class="level-indicator">
+                    <div class="level-number" id="levelProgress">LEVEL 1 / 9</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="warning">⚠️ Warning: Close the page and fate will forget your progress.</p>
+        </footer>
+
+        <div class="success-message" id="successMessage">Level Up! 🎉</div>
+
+        <button class="sound-toggle" id="soundToggle" title="Toggle Sound">
+            <span class="sound-icon">🔊</span>
+        </button>
+    </div>
+
+    <script>
+        // Game state
+        let currentDiceCount = 2;
+        let isRolling = false;
+        let soundEnabled = true;
+	let totalRolls = 0;
+
+        // Audio Context for dice roll sound
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // DOM elements
+        const gameArea = document.getElementById('gameArea');
+        const diceContainer = document.getElementById('diceContainer');
+        const currentLevelEl = document.getElementById('currentLevel');
+	const totalRollsEl = document.getElementById('totalRolls');
+        const levelProgressEl = document.getElementById('levelProgress');
+        const successMessage = document.getElementById('successMessage');
+        const soundToggle = document.getElementById('soundToggle');
+        const prompt = document.getElementById('prompt');
+
+        // Mouse tracking for glow effect
+        gameArea.addEventListener('mousemove', (e) => {
+            const rect = gameArea.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            gameArea.style.setProperty('--mouse-x', `${x}%`);
+            gameArea.style.setProperty('--mouse-y', `${y}%`);
+        });
+
+        // Sound toggle
+        soundToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            soundEnabled = !soundEnabled;
+            soundToggle.classList.toggle('muted');
+            soundToggle.querySelector('.sound-icon').textContent = soundEnabled ? '🔊' : '🔇';
+        });
+
+        // Generate dice roll sound using Web Audio API
+function playDiceSound() {
+    if (!soundEnabled) return;
+
+    // Some browsers require user gesture before sound; this avoids errors.
+    if (audioContext.state === 'suspended') return;
+
+    const now = audioContext.currentTime;
+
+    // --- Noise buffer (rattle) ---
+    const duration = 0.11; // short so users can spam clicks
+    const bufferSize = Math.floor(audioContext.sampleRate * duration);
+    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    // "Shaky" noise: decaying random with slight low-frequency bias
+    for (let i = 0; i < bufferSize; i++) {
+        const t = i / bufferSize;
+        const decay = Math.pow(1 - t, 2.2);
+        data[i] = (Math.random() * 2 - 1) * decay;
+    }
+
+    const noise = audioContext.createBufferSource();
+    noise.buffer = buffer;
+
+    // Filter to sound like dice in a cup (less harsh than raw noise)
+    const bandpass = audioContext.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.setValueAtTime(900, now);
+    bandpass.Q.setValueAtTime(0.9, now);
+
+    const highpass = audioContext.createBiquadFilter();
+    highpass.type = 'highpass';
+    highpass.frequency.setValueAtTime(180, now);
+
+    // Gain envelope
+    const gain = audioContext.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.22, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+    // Subtle "thunks" (tiny clicks) to feel physical
+    const thumpOsc = audioContext.createOscillator();
+    thumpOsc.type = 'sine';
+    thumpOsc.frequency.setValueAtTime(140, now);
+
+    const thumpGain = audioContext.createGain();
+    thumpGain.gain.setValueAtTime(0.0001, now);
+    thumpGain.gain.exponentialRampToValueAtTime(0.08, now + 0.01);
+    thumpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+
+    // Connect graph
+    noise.connect(bandpass);
+    bandpass.connect(highpass);
+    highpass.connect(gain);
+    gain.connect(audioContext.destination);
+
+    thumpOsc.connect(thumpGain);
+    thumpGain.connect(audioContext.destination);
+
+    // Play
+    noise.start(now);
+    noise.stop(now + duration);
+
+    thumpOsc.start(now);
+    thumpOsc.stop(now + 0.07);
+}
+
+        
+
+        // Create a single die element
+        function createDie(value) {
+            const die = document.createElement('div');
+            die.className = 'dice';
+
+            const inner = document.createElement('div');
+            inner.className = 'dice-inner';
+
+            // Create all 6 faces
+            for (let i = 1; i <= 6; i++) {
+                const face = document.createElement('div');
+                face.className = `dice-face face-${i}`;
+                face.innerHTML = getDotPattern(i);
+                inner.appendChild(face);
+            }
+
+            die.appendChild(inner);
+
+            // Set the rotation to show the specified value
+            setDieValue(inner, value);
+
+            return die;
+        }
+
+        // Get dot pattern HTML for a face
+        function getDotPattern(value) {
+            const patterns = {
+                1: '<div class="dot"></div>',
+                2: '<div class="dot"></div><div class="dot"></div>',
+                3: '<div class="dot"></div><div class="dot"></div><div class="dot"></div>',
+                4: '<div class="row"><div class="dot"></div><div class="dot"></div></div><div class="row"><div class="dot"></div><div class="dot"></div></div>',
+                5: '<div class="row"><div class="dot"></div><div class="dot"></div></div><div class="center"><div class="dot"></div></div><div class="row"><div class="dot"></div><div class="dot"></div></div>',
+                6: '<div class="row"><div class="dot"></div><div class="dot"></div></div><div class="row"><div class="dot"></div><div class="dot"></div></div><div class="row"><div class="dot"></div><div class="dot"></div></div>'
+            };
+            return patterns[value] || '';
+        }
+
+        // Set die rotation to show a specific value
+        function setDieValue(inner, value) {
+            const rotations = {
+                1: 'rotateX(0deg) rotateY(0deg)',
+                2: 'rotateX(0deg) rotateY(90deg)',
+                3: 'rotateX(0deg) rotateY(180deg)',
+                4: 'rotateX(0deg) rotateY(-90deg)',
+                5: 'rotateX(90deg) rotateY(0deg)',
+                6: 'rotateX(-90deg) rotateY(0deg)'
+            };
+            inner.style.transform = rotations[value];
+        }
+
+        // Initialize dice
+        function initDice() {
+            diceContainer.innerHTML = '';
+            for (let i = 0; i < currentDiceCount; i++) {
+                const die = createDie(1);
+                diceContainer.appendChild(die);
+            }
+            updateStats();
+        }
+
+        // Roll all dice
+        function rollDice() {
+            if (isRolling) return;
+
+            isRolling = true;
+            prompt.style.opacity = '0';
+            playDiceSound();
+	    totalRolls++;
+
+            const dice = diceContainer.querySelectorAll('.dice');
+            const results = [];
+
+            dice.forEach((die, index) => {
+                die.classList.add('rolling');
+
+                setTimeout(() => {
+                    const value = Math.floor(Math.random() * 6) + 1;
+                    results.push(value);
+
+                    const inner = die.querySelector('.dice-inner');
+                    setDieValue(inner, value);
+
+                    setTimeout(() => {
+                        die.classList.remove('rolling');
+                    }, 600);
+                }, index * 50);
+            });
+
+            setTimeout(() => {
+                checkResults(results);
+                isRolling = false;
+                prompt.style.opacity = '0.8';
+            }, 700);
+        }
+
+        // Check if all dice match
+        function checkResults(results) {
+            const allMatch = results.every(val => val === results[0]);
+
+            if (allMatch) {
+    if (currentDiceCount < 10) {
+        showSuccessMessage();
+playLevelUpSound();
+        setTimeout(() => {
+            currentDiceCount++;
+            initDice();
+        }, 1500);
+    } else {
+        // Winner!
+        showSuccessMessage('🎊 PERFECT! You rolled 10! 🎊');
+    }
+}
+
+            updateStats();
+        }
+
+        // Update statistics display
+function calculateProbability(diceCount) {
+    if (diceCount <= 1) return '100%';
+
+    const probability = Math.pow(1 / 6, diceCount - 1) * 100;
+
+    if (probability < 0.001) {
+        return probability.toExponential(2) + '%';
+    }
+
+    return probability.toFixed(3) + '%';
+}
+		function updateStats() {
+    			currentLevelEl.textContent = currentDiceCount;
+    			totalRollsEl.textContent = totalRolls;
+    			levelProgressEl.textContent = `LEVEL ${currentDiceCount - 1} / 9`;
+    document.getElementById('levelProbability').textContent =
+        calculateProbability(currentDiceCount);
+        }
+
+        // Show success message
+function playLevelUpSound() {
+    if (!soundEnabled) return;
+    if (audioContext.state === 'suspended') return;
+
+    const now = audioContext.currentTime;
+
+    // Two-note chime (short, satisfying)
+    const freqs = [523.25, 659.25]; // C5 -> E5
+
+    freqs.forEach((f, idx) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, now + idx * 0.03);
+
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.12, now + idx * 0.03 + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.03 + 0.12);
+
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.start(now + idx * 0.03);
+        osc.stop(now + idx * 0.03 + 0.14);
+    });
+}
+
+        function showSuccessMessage(text = 'Level Up! 🎉') {
+            successMessage.textContent = text;
+            successMessage.classList.add('show');
+
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 1200);
+        }
+
+        
+        // Game area click handler
+        gameArea.addEventListener('click', rollDice);
+
+        // Initialize game
+        initDice();
+
+        // Resume audio context on first interaction (browser requirement)
+        document.addEventListener('click', () => {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
