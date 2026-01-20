@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-	<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6de10640f83d48baab912d685e3f5335"}'></script><!-- End Cloudflare Web Analytics -->
+
+
+	<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfect Roll – Free Online Dice Game | Roll Until All Match</title>
+	<meta name="description" content="Perfect Roll is a free online dice game. Roll the dice and advance levels by matching them all. Simple, fast, and brutally addictive.">
+			<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6de10640f83d48baab912d685e3f5335"}'></script><!-- End Cloudflare Web Analytics -->
 <!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7TDMKBJCD4"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -10,12 +17,6 @@
 
   gtag('config', 'G-7TDMKBJCD4');
 </script>
-
-	<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfect Roll – Free Online Dice Game | Roll Until All Match</title>
-	<meta name="description" content="Perfect Roll is a free online dice game. Roll the dice and advance levels by matching them all. Simple, fast, and brutally addictive.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -712,9 +713,9 @@ function playDiceSound() {
             prompt.style.opacity = '0';
             playDiceSound();
 	    totalRolls++;
-			// Analytics: roll event
-window._cf?.analytics?.track("roll", {
-  dice: currentDiceCount
+			// GA4: roll event
+gtag('event', 'roll', {
+  dice_count: currentDiceCount
 });
 
 
@@ -754,9 +755,9 @@ window._cf?.analytics?.track("roll", {
 playLevelUpSound();
         setTimeout(() => {
             currentDiceCount++;
-			// Analytics: level up event
-window._cf?.analytics?.track("level_up", {
-  new_level: currentDiceCount + 1
+			// GA4: level up event
+gtag('event', 'level_up', {
+  new_dice_count: currentDiceCount
 });
 
             initDice();
@@ -844,6 +845,7 @@ function playLevelUpSound() {
     </script>
 </body>
 </html>
+
 
 
 
