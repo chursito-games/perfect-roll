@@ -753,15 +753,15 @@ gtag('event', 'roll', {
     if (currentDiceCount < 10) {
         showSuccessMessage();
 playLevelUpSound();
-        setTimeout(() => {
-            currentDiceCount++;
-			// GA4: level up event
-gtag('event', 'level_up', {
-  new_dice_count: currentDiceCount
-});
+       setTimeout(() => {
+  // GA4: level up event
+  gtag('event', 'level_up', {
+    new_dice_count: currentDiceCount + 1
+  });
 
-            initDice();
-        }, 1500);
+  currentDiceCount++;
+  initDice();
+}, 1500);
     } else {
         // Winner!
         showSuccessMessage('🎊 PERFECT! You rolled 10! 🎊');
@@ -845,6 +845,7 @@ function playLevelUpSound() {
     </script>
 </body>
 </html>
+
 
 
 
