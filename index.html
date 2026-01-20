@@ -702,6 +702,11 @@ function playDiceSound() {
             prompt.style.opacity = '0';
             playDiceSound();
 	    totalRolls++;
+			// Analytics: roll event
+window._cf?.analytics?.track("roll", {
+  dice: currentDiceCount
+});
+
 
             const dice = diceContainer.querySelectorAll('.dice');
             const results = [];
@@ -739,6 +744,11 @@ function playDiceSound() {
 playLevelUpSound();
         setTimeout(() => {
             currentDiceCount++;
+			// Analytics: level up event
+window._cf?.analytics?.track("level_up", {
+  new_level: currentDiceCount + 1
+});
+
             initDice();
         }, 1500);
     } else {
@@ -824,5 +834,6 @@ function playLevelUpSound() {
     </script>
 </body>
 </html>
+
 
 
