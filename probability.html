@@ -1,1 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Probability | Perfect Roll</title>
+  <meta name="description" content="Understand the math behind Perfect Roll: why each level gets exponentially harder, the exact probability formula, and what 'randomness has no memory' really means.">
+
+  <style>
+    :root{
+      --bg1:#1a1a2e;
+      --bg2:#0f1419;
+      --text:#e8e8e8;
+      --muted:#a8a8a8;
+      --accent:#4ecdc4;
+      --panel: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.10);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 44px 18px 80px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom: 22px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand b{
+      font-size: 1.05rem;
+      letter-spacing: .2px;
+    }
+    .brand span{
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    a{ color: var(--accent); text-decoration: underline; }
+    a:hover{ opacity: .95; }
+
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px 20px;
+      margin: 14px 0;
+    }
+
+    h1{
+      margin: 8px 0 10px;
+      font-size: 2.1rem;
+      letter-spacing: -0.02em;
+    }
+    h2{
+      margin: 26px 0 10px;
+      font-size: 1.25rem;
+      color: var(--accent);
+    }
+    h3{
+      margin: 18px 0 8px;
+      font-size: 1.05rem;
+    }
+
+    p{ margin: 10px 0; color: var(--text); }
+    .muted{ color: var(--muted); }
+
+    code, pre{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    pre{
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 14px 14px;
+      overflow:auto;
+      margin: 12px 0;
+    }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      overflow:hidden;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+    }
+    th, td{
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-align:left;
+      font-size: .95rem;
+    }
+    th{
+      color: var(--text);
+      font-weight: 700;
+      background: rgba(255,255,255,.05);
+    }
+    td{ color: var(--muted); }
+    tr:last-child td{ border-bottom: none; }
+
+    .pillrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 10px;
+    }
+    .pill{
+      display:inline-block;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .pill b{ color: var(--text); }
+
+    .foot{
+      margin-top: 34px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="topbar">
+      <div class="brand">
+        <b>Perfect Roll</b>
+        <span class="muted">Probability & difficulty explained</span>
+      </div>
+      <div>
+        <a href="/">← Back to the game</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h1>Why Perfect Roll gets brutal</h1>
+      <p>
+        Perfect Roll looks simple: click to roll dice, and if all dice match, you level up and add one more die.
+        But the game becomes hard fast for a single reason: <b>the odds shrink exponentially</b>.
+      </p>
+      <p>
+        This page explains the math behind each level, the exact probability formula, and a key idea that many
+        players feel intuitively—but rarely see proven: <b>randomness has no memory</b>.
+      </p>
+
+      <div class="pillrow">
+        <span class="pill"><b>Core idea:</b> each new die multiplies difficulty ×6</span>
+        <span class="pill"><b>Rule:</b> matching all dice</span>
+        <span class="pill"><b>Result:</b> exponential odds</span>
+      </div>
+    </div>
+
+    <h2>The basic probability at each level</h2>
+    <p>
+      Suppose you roll <b>n</b> dice. What is the chance that <b>all dice show the same number</b>?
+      One useful way to think about it:
+    </p>
+    <ul>
+      <li>The first die can be anything (it sets the “target”).</li>
+      <li>Every additional die must match that first die.</li>
+      <li>Each die has a <b>1 out of 6</b> chance to match the target number.</li>
+    </ul>
+
+    <p>That leads to a clean formula:</p>
+    <pre><code>P(all n dice match) = (1/6)^(n - 1)</code></pre>
+
+    <p class="muted">
+      Intuition: going from 2 dice to 3 dice is not “a bit harder.” It’s <b>six times harder</b>.
+      Going from 3 to 4 is again six times harder. This compounding is what makes the later levels feel impossible.
+    </p>
+
+    <h2>Level odds table (2 to 10 dice)</h2>
+    <p>
+      Perfect Roll increases the number of dice over time. Here’s what the math looks like:
+    </p>
+
+    <table aria-label="Probability table">
+      <thead>
+        <tr>
+          <th>Dice (n)</th>
+          <th>Probability</th>
+          <th>“1 in …”</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2</td><td>16.6667%</td><td>6</td></tr>
+        <tr><td>3</td><td>2.7778%</td><td>36</td></tr>
+        <tr><td>4</td><td>0.4630%</td><td>216</td></tr>
+        <tr><td>5</td><td>0.0772%</td><td>1,296</td></tr>
+        <tr><td>6</td><td>0.0129%</td><td>7,776</td></tr>
+        <tr><td>7</td><td>0.0021%</td><td>46,656</td></tr>
+        <tr><td>8</td><td>0.0004%</td><td>279,936</td></tr>
+        <tr><td>9</td><td>0.00006%</td><td>1,679,616</td></tr>
+        <tr><td>10</td><td>0.0000099%</td><td>10,077,696</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Why it “feels unfair” (but isn’t)</h2>
+    <p>
+      Many players get to a high level and think: “I’ve rolled so many times… it has to happen soon.”
+      This feeling is normal—and it’s also the main trap of probability thinking.
+    </p>
+
+    <h3>Randomness has no memory</h3>
+    <p>
+      In Perfect Roll, every roll is an independent event. That means:
+    </p>
+    <ul>
+      <li>Rolling 100 times without success does <b>not</b> make success more likely on the 101st roll.</li>
+      <li>The dice do not “remember” previous failures.</li>
+      <li>Your odds on the next roll are always the same for the current level.</li>
+    </ul>
+
+    <p class="muted">
+      The game is a clean illustration of a common bias: humans are great at patterns, but randomness doesn’t produce
+      patterns on demand.
+    </p>
+
+    <h2>Expected number of attempts (a useful mental model)</h2>
+    <p>
+      A rough way to think about difficulty is: if an event happens with probability <b>p</b>, then it takes about
+      <b>1/p</b> tries on average to see it happen once. This is not a guarantee—just a long-run average.
+    </p>
+
+    <p>
+      For example:
+    </p>
+    <ul>
+      <li>At 6 dice: p = 1/7,776 → about <b>7,776 rolls</b> on average.</li>
+      <li>At 10 dice: p = 1/10,077,696 → about <b>10 million rolls</b> on average.</li>
+    </ul>
+
+    <p class="muted">
+      That’s why the last levels are “brutal”: the math is telling you that the game is meant to be a long-shot.
+    </p>
+
+    <h2>So what is the “skill” here?</h2>
+    <p>
+      Perfect Roll is luck-based by design. The “skill” is not in changing the odds—it’s in understanding them.
+      The later levels teach a simple lesson: exponential probability grows more extreme than our intuition expects.
+    </p>
+
+    <p>
+      If you want a practical takeaway, it’s this:
+    </p>
+    <div class="card">
+      <p style="margin:0;">
+        <b>Each extra die multiplies difficulty by 6.</b><br>
+        If a level feels suddenly impossible, it’s not bad luck—it’s the math doing exactly what it should.
+      </p>
+    </div>
+
+    <div class="foot">
+      <div style="margin-bottom:10px;">
+        <a href="/">← Back to Perfect Roll</a>
+      </div>
+      <div>
+        Looking for the next page? You can also read the <a href="/faq.html">FAQ</a> for practical questions and short answers.
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
 
