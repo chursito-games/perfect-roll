@@ -1,1 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FAQ | Perfect Roll</title>
+  <meta name="description" content="Frequently asked questions about Perfect Roll: odds, probability, randomness, strategy, data storage, and how the game really works.">
+
+  <style>
+    :root{
+      --bg1:#1a1a2e;
+      --bg2:#0f1419;
+      --text:#e8e8e8;
+      --muted:#a8a8a8;
+      --accent:#4ecdc4;
+      --panel: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.10);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 44px 18px 80px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom: 22px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brand b{
+      font-size: 1.05rem;
+      letter-spacing: .2px;
+    }
+    .brand span{
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    a{ color: var(--accent); text-decoration: underline; }
+    a:hover{ opacity: .95; }
+
+    h1{
+      margin: 8px 0 14px;
+      font-size: 2.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    h2{
+      margin: 26px 0 10px;
+      font-size: 1.25rem;
+      color: var(--accent);
+    }
+
+    p{ margin: 10px 0; color: var(--text); }
+    .muted{ color: var(--muted); }
+
+    .qa{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px 18px;
+      margin: 14px 0;
+    }
+
+    .q{
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .foot{
+      margin-top: 36px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="topbar">
+      <div class="brand">
+        <b>Perfect Roll</b>
+        <span class="muted">Frequently Asked Questions</span>
+      </div>
+      <div>
+        <a href="/">← Back to the game</a>
+      </div>
+    </div>
+
+    <h1>Frequently Asked Questions</h1>
+
+    <div class="qa">
+      <div class="q">What is the goal of Perfect Roll?</div>
+      <p>
+        The goal is to reach <strong>10 identical dice</strong>. Each time all dice match,
+        you advance one level and add an extra die. The game becomes exponentially harder
+        as the number of dice increases.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Is Perfect Roll based on skill or luck?</div>
+      <p>
+        Perfect Roll is intentionally <strong>luck-based</strong>. There is no strategy
+        that can change the odds. The only “skill” involved is understanding how probability
+        behaves and accepting randomness.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Do previous failed rolls increase my chances?</div>
+      <p>
+        No. Each roll is completely independent. The dice have no memory.
+        Rolling 1,000 times without success does not make the next roll more likely to succeed.
+        This is a common misconception known as the <em>gambler’s fallacy</em>.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Why does the game suddenly feel impossible?</div>
+      <p>
+        Because the difficulty grows exponentially. Each additional die divides your odds by six.
+        For example, going from 6 dice to 7 dice makes the game six times harder instantly.
+      </p>
+      <p class="muted">
+        You can see the exact numbers on the <a href="/probability.html">Probability page</a>.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Is there a maximum level?</div>
+      <p>
+        Yes. The current version of Perfect Roll caps at 10 dice.
+        At that level, the odds are approximately 1 in 10 million for a successful roll.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Does the game use real money or gambling?</div>
+      <p>
+        No. Perfect Roll does not involve real money, betting, or payouts of any kind.
+        It is a purely experimental and entertainment-focused dice game.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Does Perfect Roll store my data or progress?</div>
+      <p>
+        The game does not store personal information.
+        Any gameplay state exists only in your browser session.
+        Closing the page resets progress.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Can I improve my odds by clicking faster or slower?</div>
+      <p>
+        No. Clicking speed does not affect randomness.
+        Each roll uses a new random outcome regardless of timing or interaction pattern.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Why doesn’t the game “reward persistence”?</div>
+      <p>
+        Perfect Roll is designed to reflect true randomness.
+        While many games subtly adjust odds to help players progress,
+        this game deliberately avoids that behavior to remain mathematically honest.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Is Perfect Roll meant to teach probability?</div>
+      <p>
+        Indirectly, yes. While it is not an educational tool in the traditional sense,
+        the game demonstrates how exponential probability works far more effectively
+        than numbers alone.
+      </p>
+    </div>
+
+    <div class="qa">
+      <div class="q">Where can I learn more about the math behind the game?</div>
+      <p>
+        The full explanation, formulas, and level breakdowns are available on the
+        <a href="/probability.html">Probability page</a>.
+      </p>
+    </div>
+
+    <div class="foot">
+      <div style="margin-bottom:10px;">
+        <a href="/">← Back to Perfect Roll</a>
+      </div>
+      <div>
+        Want deeper context? Read the <a href="/about.html">About page</a> for design intent and philosophy.
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
 
