@@ -15,19 +15,17 @@
     gtag('config', 'G-YL7TDWMHZ0');
   </script>
 
-  <title>Red Reflex — Reaction Time Test (Best of 5)</title>
-  
-  <link rel="canonical" href="https://redreflex.net/" />
-  <meta name="description" content="Red Reflex is a fast reaction time test (Best of 5). Wait for the screen to turn red, then tap as quickly as you can. Track your personal best on your device." />
-  <meta property="og:title" content="Red Reflex — Reaction Time Test (Best of 5)" />
+  <title>Reaction Time Test – Red Reflex | Perfect Roll Game</title>
+
+  <link rel="canonical" href="https://perfectrollgame.com/reaction-test/" />
+  <meta name="description" content="Red Reflex is a free reaction time test. Press Start, wait for the screen to turn red, then tap as fast as you can. Play 5 rounds, track your best time, and challenge friends." />
+  <meta property="og:title" content="Reaction Time Test – Red Reflex | Perfect Roll Game" />
   <meta property="og:description" content="Wait for red. Tap instantly. Play 5 rounds and beat your personal best." />
-  <meta property="og:url" content="https://redreflex.net/" />
+  <meta property="og:url" content="https://perfectrollgame.com/reaction-test/" />
   <meta property="og:type" content="website" />
   <meta name="theme-color" content="#0b0f1a" />
-<meta name="description" content="Red Reflex is a free reaction time test. Press Start, wait for the screen to turn red, then tap as fast as you can. Play 5 rounds, track your best time, and challenge friends." />
 
   <style>
-
     :root{
       --bg:#0b0f1a;
       --panel:#0f1730;
@@ -62,7 +60,6 @@
       padding-bottom: env(safe-area-inset-bottom);
     }
 
-    /* When in game mode on mobile, avoid scroll friction */
     body.game-mode{
       overflow:hidden;
       touch-action: manipulation;
@@ -75,6 +72,28 @@
       padding:18px;
       align-content:start;
       gap:12px;
+    }
+
+    .topnav{
+      width:min(980px, 100%);
+      margin:0 auto 4px;
+      padding:12px 14px;
+      border-radius: var(--radius);
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.10);
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:center;
+      align-items:center;
+      font-size:14px;
+    }
+    .topnav a{
+      color:var(--text);
+      text-decoration:none;
+    }
+    .topnav a:hover{
+      text-decoration:underline;
     }
 
     .card{
@@ -358,7 +377,6 @@
       color: rgba(233,238,252,.92);
     }
 
-    /* Mobile tuning */
     @media (max-width: 560px){
       .wrap{
         padding:12px;
@@ -404,10 +422,6 @@
       }
     }
 
-    /* =========
-       GAME MODE (Option A)
-       On mobile during a run: hide title/howto, compact left, expand playfield.
-       ========= */
     @media (max-width: 560px){
       body.game-mode .pageTitle,
       body.game-mode .howto{
@@ -423,15 +437,13 @@
         height: 100svh;
       }
 
-      /* Compact the left panel to the essentials */
       body.game-mode .left{
         padding:10px 12px;
       }
       body.game-mode .brand{
-        display:none; /* frees vertical space */
+        display:none;
       }
 
-      /* Show only ROUND + PB while playing */
       body.game-mode .statgrid{
         margin:0 0 10px;
         gap:8px;
@@ -446,7 +458,6 @@
         gap:10px;
       }
 
-      /* Hide non-essential buttons while in-run to reduce clutter */
       body.game-mode #copyBtn,
       body.game-mode #resetBtn{
         display:none;
@@ -456,19 +467,15 @@
         display:none;
       }
 
-      /* Expand the game area */
       body.game-mode .right{
         min-height: 68svh;
       }
 
-      /* Slightly larger center for clarity */
       body.game-mode .center{
         width: min(560px, 100%);
       }
     }
 
-  
-    /* Footer nav (AdSense-friendly site navigation) */
     footer.site-footer{
       width:min(980px, 100%);
       margin: 12px auto 22px;
@@ -497,12 +504,19 @@
       gap:12px;
       align-items:center;
     }
-    
   </style>
 </head>
 
 <body>
   <div class="wrap">
+
+    <nav class="topnav" aria-label="Site navigation">
+      <a href="/">Home</a>
+      <a href="/probability.html">Probability</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/about.html">About</a>
+      <a href="/privacy.html">Privacy</a>
+    </nav>
 
     <div class="pageTitle" id="pageTitle">
       <h1>Red Reflex</h1>
@@ -520,7 +534,6 @@
       </ol>
     </div>
 
-    
     <section class="howto" id="aboutSnippet" aria-label="About Red Reflex">
       <h2>About this test</h2>
       <div style="color:var(--muted); font-size:14px; line-height:1.55;">
@@ -538,7 +551,8 @@
         </p>
       </div>
     </section>
-<div class="card phase-ready" id="app">
+
+    <div class="card phase-ready" id="app">
       <div class="left">
         <div class="brand">
           <div class="logo" aria-hidden="true"></div>
@@ -597,9 +611,10 @@
         <div class="toast" id="toast" aria-live="polite"></div>
       </div>
     </div>
+
     <footer class="site-footer" role="contentinfo">
       <div class="row">
-        <div>© 2026 Red Reflex</div>
+        <div>© 2026 Perfect Roll Game</div>
         <div class="links">
           <a href="/about.html">About</a>
           <a href="/privacy.html">Privacy Policy</a>
@@ -614,24 +629,18 @@
     (() => {
       "use strict";
 
-      // -------------------------
-      // Configuration
-      // -------------------------
       const TOTAL_ROUNDS = 5;
       const WAIT_MIN_MS = 8000;
       const WAIT_MAX_MS = 15000;
       const DECIMALS = 3;
-
       const SAVE_KEY = "red_reflex_v1";
 
       function track(eventName, params = {}) {
-  if (typeof window.gtag === "function") {
-    window.gtag("event", eventName, params);
-  }
-}
-      // -------------------------
-      // DOM
-      // -------------------------
+        if (typeof window.gtag === "function") {
+          window.gtag("event", eventName, params);
+        }
+      }
+
       const app = document.getElementById("app");
       const playfield = document.getElementById("playfield");
       const centerCard = document.getElementById("centerCard");
@@ -652,11 +661,8 @@
 
       const toast = document.getElementById("toast");
 
-      // -------------------------
-      // State
-      // -------------------------
       const defaultState = () => ({
-        phase: "ready", // ready | wait | go | result | done
+        phase: "ready",
         round: 0,
         waitTimerId: null,
         goTime: 0,
@@ -668,17 +674,10 @@
 
       let state = defaultState();
 
-      // -------------------------
-      // Game-mode helper (Option A)
-      // -------------------------
       function setGameMode(on) {
-        // Only meaningful on mobile due to CSS media query
         document.body.classList.toggle("game-mode", !!on);
       }
 
-      // -------------------------
-      // Persistence
-      // -------------------------
       function loadPB() {
         try {
           const raw = localStorage.getItem(SAVE_KEY);
@@ -697,9 +696,6 @@
         } catch {}
       }
 
-      // -------------------------
-      // Helpers
-      // -------------------------
       function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
 
       function msToText(ms) {
@@ -727,7 +723,6 @@
 
       function setPhase(phase) {
         state.phase = phase;
-
         app.classList.remove("phase-ready", "phase-wait", "phase-go");
         if (phase === "ready") app.classList.add("phase-ready");
         if (phase === "wait") app.classList.add("phase-wait");
@@ -747,9 +742,6 @@
         centerCard.classList.add("shake");
       }
 
-      // -------------------------
-      // Core flow
-      // -------------------------
       function startRun() {
         clearWaitTimer();
         state = defaultState();
@@ -762,7 +754,6 @@
         copyBtn.disabled = true;
         ctaLine.hidden = true;
 
-        // Enter game mode for mobile while playing
         setGameMode(true);
 
         headline.textContent = "Wait…";
@@ -770,8 +761,8 @@
         scheduleGo();
 
         track("game_start", {
-  total_rounds: TOTAL_ROUNDS
-});
+          total_rounds: TOTAL_ROUNDS
+        });
 
         render();
       }
@@ -874,7 +865,6 @@
         subline.textContent = "Don’t click yet. The screen will turn red once.";
         scheduleGo();
 
-        // keep game mode on during the run
         setGameMode(true);
 
         track("round_next", { round: state.round });
@@ -905,8 +895,6 @@
         ctaLine.textContent = "Try to beat yourself and share to beat your friends!";
 
         copyBtn.disabled = false;
-
-        // Exit game mode after run so user can scroll/read/copy comfortably
         setGameMode(false);
 
         track("run_complete", {
@@ -937,9 +925,6 @@
         track("pb_reset");
       }
 
-      // -------------------------
-      // Render
-      // -------------------------
       function render() {
         roundText.textContent = `ROUND ${state.round} / ${TOTAL_ROUNDS}`;
         bestText.textContent = msToText(state.pbMs);
@@ -952,9 +937,6 @@
         ctaLine.hidden = (state.phase !== "done");
       }
 
-      // -------------------------
-      // Events
-      // -------------------------
       startBtn.addEventListener("click", startRun);
       nextBtn.addEventListener("click", nextRound);
       copyBtn.addEventListener("click", copyResult);
@@ -968,7 +950,6 @@
         }
       });
 
-      // Initialize UI
       setPhase("ready");
       setGameMode(false);
       render();
